@@ -5,7 +5,7 @@
 
 //# meta-variables
 // gateway_interface : CGI/1.1
-// path_translated : /Users/kimjeongjun/webserv/YoupiBanane/youpi.bla
+// path_translated : /Users/gabastos/webserv/YoupiBanane/youpi.bla
 // query_string : 
 // req_method : GET
 // content_len : 0
@@ -15,7 +15,7 @@
 // remote_addr : 127.0.0.1
 // script_name : /directory//youpi.bla
 // path_info : /directory/youpi.bla
-// script_filename : /Users/kimjeongjun/webserv/YoupiBanane/youpi.bla
+// script_filename : /Users/gabastos/webserv/YoupiBanane/youpi.bla
 // server_name : localhost
 // server_port : 80
 // server_protocol : HTTP/1.1

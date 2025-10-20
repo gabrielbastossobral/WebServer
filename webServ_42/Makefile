@@ -1,6 +1,3 @@
-# AUTHOR:	@AYoungSn @mocha-kim
-# PUBLISH:	2022/02
-
 NAME = webserv
 
 SRCS_PATH		= ./srcs
