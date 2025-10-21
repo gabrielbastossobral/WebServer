@@ -6,7 +6,7 @@
 /*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 10:31:20 by gcosta-m          #+#    #+#             */
-/*   Updated: 2025/10/21 10:38:12 by gcosta-m         ###   ########.fr       */
+/*   Updated: 2025/10/21 16:16:31 by gcosta-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstring>
+#include <algorithm>
+#include <sys/stat.h>
+#include <errno.h>
+#include <iomanip>
+#include <cctype>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
