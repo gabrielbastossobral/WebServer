@@ -167,3 +167,68 @@ std::string dir_listing(const std::string &path = "www/html/data/")
 	html << "</ul>";
 	return html.str();
 }
+
+std::vector<std::string> split(const std::string &s, char delimiter)
+{
+	std::vector<std::string> tokens;
+	std::istringstream tokenStream(s);
+	std::string token;
+
+	while (std::getline(tokenStream, token, delimiter))
+		tokens.push_back(token);
+	return tokens;
+}
+
+std::string get_ip(int client_fd)
+{
+	struct sockaddr_in addr;
+	socklen_t addr_size = sizeof(struct sockaddr_in);
+	char ip[16];
+
+	getsockname(client_fd, (struct sockaddr *)&addr, &addr_size);
+	strncpy(ip, inet_ntoa(addr.sin_addr), sizeof(ip));
+	return (ip);
+}
+
+std::string get_current_date_GMT(void)
+{
+	time_t rawtime;
+	struct tm *timeinfo;
+	char buffer[80];
+	std::string result;
+
+	time(&rawtime);
+	timeinfo = gmtime(&rawtime);
+	strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", timeinfo);
+	result = buffer;
+	return result;
+}
+
+size_t string_to_hexa(std::string str)
+{
+	std::stringstream convert;
+	size_t result = 0;
+	convert << std::hex << str;
+	convert >> result;
+	return result;
+}
+
+char *ft_strnstr(const char *haystack, const char *needle, size_t len)
+{
+	size_t needle_len;
+
+	if (!haystack || !needle)
+		return NULL;
+	if (*needle == '\0')
+		return (char *)haystack;
+
+	needle_len = strlen(needle);
+	while(*haystack && len >= needle_len)
+	{
+		if (*haystack == *needle && strncmp(haystack, needle, needle_len) == 0)
+			return (char *)haystack;
+		haystack++;
+		len--;
+	}
+	return NULL;
+}
