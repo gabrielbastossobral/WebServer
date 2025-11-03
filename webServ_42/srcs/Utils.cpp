@@ -6,7 +6,11 @@
 /*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 10:38:51 by gcosta-m          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/11/03 08:24:49 by gabastos         ###   ########.fr       */
+=======
+/*   Updated: 2025/11/03 10:24:47 by gabastos         ###   ########.fr       */
+>>>>>>> cfea8ee (server already)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,34 +235,4 @@ char *ft_strnstr(const char *haystack, const char *needle, size_t len)
 		len--;
 	}
 	return NULL;
-}
-
-void handle_for_sigpipe() {
-  struct sigaction sa;
-  memset(&sa, '\0', sizeof(sa));
-  sa.sa_handler = SIG_IGN;
-  sa.sa_flags = 0;
-  if (sigaction(SIGPIPE, &sa, NULL)) return;
-}
-
-int setSocketNonBlocking(int fd) {
-  int flag = fcntl(fd, F_GETFL, 0);
-  if (flag == -1) return -1;
-
-  flag |= O_NONBLOCK;
-  if (fcntl(fd, F_SETFL, flag) == -1) return -1;
-  return 0;
-}
-
-void setSocketNodelay(int fd) {
-  int enable = 1;
-  setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (void *)&enable, sizeof(enable));
-}
-
-void setSocketNoLinger(int fd) {
-  struct linger linger_;
-  linger_.l_onoff = 1;
-  linger_.l_linger = 30;
-  setsockopt(fd, SOL_SOCKET, SO_LINGER, (const char *)&linger_,
-             sizeof(linger_));
 }
