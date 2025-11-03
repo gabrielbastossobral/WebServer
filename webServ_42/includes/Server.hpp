@@ -5,33 +5,55 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/03 09:03:19 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/03 09:03:20 by gabastos         ###   ########.fr       */
+/*   Created: 2025/11/03 11:45:36 by gabastos          #+#    #+#             */
+/*   Updated: 2025/11/03 11:47:38 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-#include <memory>
-#include "Channel.hpp"
-#include "EventLoop.hpp"
-#include "EventLoopThreadPool.hpp"
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
-class Server {
-	private:
-		EventLoop *loop_;
-		int threadNum_;
-		std::unique_ptr<EventLoopThreadPool> eventLoopThreadPool_;
-		bool started_;
-		std::shared_ptr<Channel> acceptChannel_;
-		int port_;
-		int listenFd_;
-		static const int MAXFDS = 100000;
- 	public:
-		Server(EventLoop *loop, int threadNum, int port);
-		~Server() {}
-		EventLoop *getLoop() const { return loop_; }
-		void start();
-		void handNewConn();
-		void handThisConn() { loop_->updatePoller(acceptChannel_); }
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <fcntl.h>
+#include "Location.hpp"
 
+class Server
+{
+	public:
+		int client_body_limit;
+		bool autoindex;
+		std::string root;
+		std::string server_name;
+		std::vector<std::string> index;
+		std::vector<MethodType> allow_methods;
+		std::map<int, std::string> error_pages;
+		
+		std::vector<Location> locations;
+		
+		int redirect_status;
+		std::string redirect_url;
+
+		struct timeval send_timeout;
+		struct timeval recv_timeout;
+
+	public:
+		std::string host;
+		std::string port;
+		
+		int listen_socket;
+		
+		Server();
+		~Server();
+
+		void create_socket();
+		void print_server_info();
+
+		static MethodType s_to_methodtype(std::string str);
+
+		Location* get_cur_location(std::string request_uri) const;
+		bool is_in_location(std::string location_path, std::string request_uri) const;
 };
+
+#endif

@@ -6,11 +6,7 @@
 /*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 10:31:20 by gcosta-m          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/11/03 08:57:33 by gabastos         ###   ########.fr       */
-=======
-/*   Updated: 2025/11/03 10:24:58 by gabastos         ###   ########.fr       */
->>>>>>> cfea8ee (server already)
+/*   Updated: 2025/11/03 11:45:54 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +50,6 @@ std::string get_ip(int client_fd);
 std::string get_current_date_GMT(void);
 size_t string_to_hexa(std::string input);
 char *ft_strnstr(const char *haystack, const char *needle, size_t len);
-void handle_for_sigpipe();
-int setSocketNonBlocking(int fd);
-void setSocketNoLinger(int fd);
-void setSocketNodelay(int fd);
 
 
 #endif
