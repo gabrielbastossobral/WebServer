@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 10:31:20 by gcosta-m          #+#    #+#             */
-/*   Updated: 2025/10/21 16:16:31 by gcosta-m         ###   ########.fr       */
+/*   Updated: 2025/11/03 08:57:33 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,13 @@
 #include <errno.h>
 #include <iomanip>
 #include <cctype>
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -43,5 +50,10 @@ std::string get_ip(int client_fd);
 std::string get_current_date_GMT(void);
 size_t string_to_hexa(std::string input);
 char *ft_strnstr(const char *haystack, const char *needle, size_t len);
+void handle_for_sigpipe();
+int setSocketNonBlocking(int fd);
+void setSocketNoLinger(int fd);
+void setSocketNodelay(int fd);
+
 
 #endif
