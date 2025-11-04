@@ -62,6 +62,9 @@ Location::~Location()
  * 
  * Prints the configuration details of this location block for debugging purposes.
  * Imprime os detalhes de configuração deste bloco de localização para depuração.
+ * 
+ * @param (none)
+ * @return (void)
  */
 void Location::print_location_info()
 {
@@ -82,7 +85,7 @@ void Location::print_location_info()
  * Converts a string representation of an HTTP method to the MethodType enum.
  * Converte uma representação em string de um método HTTP para o enum MethodType.
  * 
- * @param str HTTP method name (e.g., "GET", "POST", "DELETE")
+ * @param str HTTP method name (e.g., "GET", "POST", "DELETE") - case-sensitive
  * @return Corresponding MethodType enum value, or INVALID if not recognized
  */
 MethodType Location::s_to_methodtype(std::string str)
