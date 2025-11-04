@@ -6,18 +6,18 @@
 /*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 11:45:36 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/03 11:47:38 by gabastos         ###   ########.fr       */
+/*   Updated: 2025/11/04 10:20:22 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
-#define SERVER_HPP
+# define SERVER_HPP
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <fcntl.h>
-#include "Location.hpp"
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <netdb.h>
+# include <fcntl.h>
+# include "Location.hpp"
 
 class Server
 {

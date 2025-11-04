@@ -6,42 +6,42 @@
 /*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 10:31:20 by gcosta-m          #+#    #+#             */
-/*   Updated: 2025/11/03 11:45:54 by gabastos         ###   ########.fr       */
+/*   Updated: 2025/11/04 10:21:01 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_HPP
-#define UTILS_HPP
+# define UTILS_HPP
 
-#include <string>
-#include <vector>
-#include <iostream>
-#include <sstream>
-#include <map>
-#include <sstream>
-#include <ctime>
-#include <dirent.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <cstring>
-#include <algorithm>
-#include <sys/stat.h>
-#include <errno.h>
-#include <iomanip>
-#include <cctype>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <signal.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <unistd.h>
+# include <string>
+# include <vector>
+# include <iostream>
+# include <sstream>
+# include <map>
+# include <sstream>
+# include <ctime>
+# include <dirent.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <cstring>
+# include <algorithm>
+# include <sys/stat.h>
+# include <errno.h>
+# include <iomanip>
+# include <cctype>
+# include <fcntl.h>
+# include <netinet/in.h>
+# include <netinet/tcp.h>
+# include <signal.h>
+# include <string.h>
+# include <sys/socket.h>
+# include <unistd.h>
 
-#define RED "\033[31m"
-#define GREEN "\033[32m"
-#define YELLOW "\033[33m"
-#define RESET "\033[0m"
+# define RED "\033[31m"
+# define GREEN "\033[32m"
+# define YELLOW "\033[33m"
+# define RESET "\033[0m"
 
 int replace(std::string original, std::string to_replace, std::string replacement);
 std::string dir_listing();
