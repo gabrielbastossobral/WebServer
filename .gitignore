@@ -1,0 +1,15 @@
+# Object files
+*.o
+
+# Executable
+webServ_42/webserv
+
+# Build artifacts
+*.a
+*.so
+*.dylib
+
+# Temporary files
+*.swp
+*.swo
+*~
