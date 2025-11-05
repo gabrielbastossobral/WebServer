@@ -153,3 +153,140 @@ Location Config_Parser::parse_location(size_t *index)
 	}
 	return location;
 }
+
+int Config_Parser::set_server_value(Server *server, const std::string key, const std::string value)
+{
+	if (key == "server_name")
+	{
+		server->server_name = value;
+	}
+	else if (key == "listen")
+	{
+		std::vector<std::string> tmp = split(value, ':');
+		if (server->host != "" && server->host != tmp[0])
+			return FAILURE;
+		server->host = tmp[0];
+		server->port = tmp[1];
+	}
+	else if (key == "root")
+	{
+		server->root = value;
+	}
+	else if (key == "index")
+	{
+		std::vector<std::string> tmp = split(value, ' ');
+		for (unsigned long i = 0; i != tmp.size(); i++)
+			server->index.push_back(tmp[i]);
+	}
+	else if (key == "allow_methods")
+	{
+		std::vector<std::string> tmp = split(value, ' ');
+		for (unsigned long i = 0; i != tmp.size(); i++)
+			server->allow_methods.push_back(Server::s_to_methodtype(tmp[i]));
+	}
+	else if (key == "autoindex")
+	{
+		server->autoindex = value == "on" ? true : false;
+	}
+	else if (key == "client_body_limit")
+	{
+		server->client_body_limit = atoi(value.c_str());
+	}
+	else if (key == "recv_timeout")
+	{
+		server->recv_timeout.tv_sec = atoi(value.c_str());
+	}
+	else if (key == "send_timeout")
+	{
+		server->send_timeout.tv_sec = atoi(value.c_str());
+	}
+	else if (key == "return")
+	{
+		std::vector<std::string> tmp = split(value, ' ');
+		server->redirect_status = atoi(tmp[0].c_str());
+		server->redirect_url = tmp[1];
+	}
+	else if (key == "error_page")
+	{
+		std::vector<std::string> tmp = split(value, ' ');
+		std::string path = tmp[tmp.size() - 1];
+		for (unsigned long i = 0; i != tmp.size() - 1; i++)
+		{
+			int status_code = atoi(tmp[i].c_str());
+			if (server->error_pages.find(status_code) != server->error_pages.end())
+				continue;
+			server->error_pages[status_code] = path;
+		}
+	}
+	else
+	{
+		return FAILURE;
+	}
+	return SUCCESS;
+}
+
+int Config_Parser::set_location_value(Location *location, const std::string key, const std::string value)
+{
+	if (key == "root")
+	{
+		location->root = value;
+	}
+	else if (key == "index")
+	{
+		std::vector<std::string> tmp = split(value, ' ');
+		for (unsigned long i = 0; i != tmp.size(); i++)
+			location->index.push_back(tmp[i]);
+	}
+	else if (key == "allow_methods")
+	{
+		std::vector<std::string> tmp = split(value, ' ');
+		for (unsigned long i = 0; i != tmp.size(); i++)
+			location->allow_methods.push_back(Location::s_to_methodtype(tmp[i]));
+	}
+	else if (key == "cgi_info")
+	{
+		unsigned long i = value.find_first_of(" ");
+		if (i == std::string::npos)
+			return FAILURE;
+		int j = value.find_first_not_of(" ", i);
+		location->cgi_info[value.substr(0, i)] = value.substr(j, value.length());
+	}
+	else if (key == "client_body_limit")
+	{
+		location->client_body_limit = atoi(value.c_str());
+	}
+	else
+	{
+		return FAILURE;
+	}
+	return SUCCESS;
+}
+
+int Config_Parser::check_line_syntax(const std::string line)
+{
+	size_t sharp;
+	sharp = line.find('#');
+	if (sharp != std::string::npos)
+	{
+		line.erase(sharp);
+		if (line.find_first_not_of(" \t\n") != std::string::npos)
+			return EMPTY;
+	}
+
+	size_t semicol;
+	size_t find;
+	semicol = line.find_first_of(';');
+	if (semicol == std::string::npos)
+		return FAILURE;
+	find = line.find_first_not_of(" \t\n", semicol + 1, line.length() - semicol - 1);
+	if (find != std::string::npos)
+		return FAILURE;
+	find = line.find_last_not_of(" \t\n", semicol - 1);
+	return find;
+}
+
+int Config_Parser::print_parse_error()
+{
+	std::cout << RED "[ERROR]: Config parsing failed." RESET << std::endl;
+	return FAILURE;
+}
