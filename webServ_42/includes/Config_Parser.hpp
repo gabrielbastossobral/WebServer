@@ -13,7 +13,8 @@
 #ifndef CONFIG_PARSER_HPP
 # define CONFIG_PARSER_HPP
 
-# include <Utils.hpp>
+# include "Utils.hpp"
+# include "Server.hpp"
 # include <fstream>
 
 # define SUCCESS 0

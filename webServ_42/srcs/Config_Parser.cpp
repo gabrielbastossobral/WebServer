@@ -89,7 +89,7 @@ Server Config_Parser::parse_server(size_t *index)
 		}
 		if (key == "location")
 		{
-			server.add_location(parse_location(&cur));
+			server.locations.push_back(parse_location(&cur));
 		}
 		else
 		{
@@ -262,7 +262,7 @@ int Config_Parser::set_location_value(Location *location, const std::string key,
 	return SUCCESS;
 }
 
-int Config_Parser::check_line_syntax(const std::string line)
+int Config_Parser::check_line_syntax(std::string line)
 {
 	size_t sharp;
 	sharp = line.find('#');
