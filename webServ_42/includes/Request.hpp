@@ -26,8 +26,14 @@ class Request
         bool is_not_method(const std::string method);
         friend std::ostream & operator<<(std::ostream &out, const Request &req)
         {
-            out << "Method: " << req.method << "\npath: " << req.path << "\nHeaders:\n"
-            << req.headers << "\nBody:" << req.body << "\n";
+            out << "Method: " << req.method << "\npath: " << req.path << "\nHeaders:\n";
+
+            for (std::map<std::string, std::string>::const_iterator it = req.headers.begin(); 
+                 it != req.headers.end(); ++it) {
+                out << "  " << it->first << ": " << it->second << "\n";
+            }
+            
+            out << "Body: " << req.body << "\n";
             return out;
         }
 };

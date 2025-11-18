@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/21 10:38:51 by gcosta-m          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/11/03 08:24:49 by gabastos         ###   ########.fr       */
-=======
-/*   Updated: 2025/11/03 10:24:47 by gabastos         ###   ########.fr       */
->>>>>>> cfea8ee (server already)
+/*   Created: 2025/11/18 10:53:32 by gcosta-m          #+#    #+#             */
+/*   Updated: 2025/11/18 10:53:35 by gcosta-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,4 +231,11 @@ char *ft_strnstr(const char *haystack, const char *needle, size_t len)
 		len--;
 	}
 	return NULL;
+}
+
+std::string NumberToString(size_t number) 
+{
+    std::stringstream ss;
+    ss << number;
+    return ss.str();
 }

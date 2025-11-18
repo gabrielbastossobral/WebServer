@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 10:31:20 by gcosta-m          #+#    #+#             */
-/*   Updated: 2025/11/04 10:21:01 by gabastos         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:52:36 by gcosta-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@
 # define GREEN "\033[32m"
 # define YELLOW "\033[33m"
 # define RESET "\033[0m"
+# define WHT "\033[37m"
 
 int replace(std::string original, std::string to_replace, std::string replacement);
 std::string dir_listing();
@@ -50,6 +51,6 @@ std::string get_ip(int client_fd);
 std::string get_current_date_GMT(void);
 size_t string_to_hexa(std::string input);
 char *ft_strnstr(const char *haystack, const char *needle, size_t len);
-
+std::string NumberToString(size_t number);
 
 #endif

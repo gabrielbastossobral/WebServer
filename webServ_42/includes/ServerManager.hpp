@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerManager.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 10:19:43 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/04 10:19:43 by gabastos         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:46:47 by gcosta-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include "Request.hpp"
 # include "Response.hpp"
 # include "CgiHandler.hpp"
+# include "../includes/Utils.hpp"
 
 #define CGI_READ_BUFFER_SIZE 64000
 

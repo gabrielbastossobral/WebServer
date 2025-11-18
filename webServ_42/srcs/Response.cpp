@@ -1,4 +1,4 @@
-#include "Response.hpp"
+#include "../includes/Response.hpp"
 
 Response::Response(std::string status)
 {
@@ -18,6 +18,11 @@ void Response::append_header(std::string first, std::string second)
 int Response::get_body_size()
 {
     return this->body.size();
+}
+
+void Response::set_body(std::string str)
+{
+    this->body = str;
 }
 
 std::string Response::make_header()

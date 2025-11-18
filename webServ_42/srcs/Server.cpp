@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 11:44:38 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/03 11:44:38 by gabastos         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:38:47 by gcosta-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,38 @@ void Server::print_server_info()
 		std::cout << "> root: " << root << "\n";
 		std::cout << "> client_body_limit: " << client_body_limit << "\n";
 		std::cout << "> autoindex: " << (autoindex ? "on\n" : "off\n");
-		std::cout << "> index: " << index << "\n";
-		std::cout << "> allow_methods: " << allow_methods << "\n";
+		std::cout << "> index: ";
+		for (std::vector<std::string>::iterator it = index.begin(); it != index.end(); ++it)
+		{
+			std::cout << *it;
+			if (it + 1 != index.end())
+				std::cout << ", ";
+		}
+		std::cout << "\n";
+		std::cout << "> allow_methods: ";
+		for (std::vector<MethodType>::iterator it = allow_methods.begin(); it != allow_methods.end(); ++it)
+		{
+			if (*it == GET)
+				std::cout << "GET";
+			else if (*it == POST)
+				std::cout << "POST";
+			else if (*it == DELETE)
+				std::cout << "DELETE";
+			
+			if (it + 1 != allow_methods.end())
+				std::cout << ", ";
+		}
+		std::cout << "\n";
 		std::cout << "> error pages: ";
 		if (error_pages.size() > 0)
-			std::cout << "\n" << error_pages;
+		{
+			std::cout << "\n";
+			for (std::map<int, std::string>::iterator it = error_pages.begin(); 
+				it != error_pages.end(); ++it)
+			{
+				std::cout << "  " << it->first << ": " << it->second << "\n";
+			}
+		}
 		else
 			std::cout << "(empty)\n";
 		for (unsigned long i = 0; i < locations.size(); i++)

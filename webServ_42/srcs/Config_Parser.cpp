@@ -6,7 +6,7 @@
 /*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 10:31:29 by gcosta-m          #+#    #+#             */
-/*   Updated: 2025/11/04 10:33:03 by gcosta-m         ###   ########.fr       */
+/*   Updated: 2025/11/18 11:14:20 by gcosta-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Config_Parser::Config_Parser(const char *filename)
 	std::ifstream file;
 	content.clear();
 	file.open(filename);
-	if (!file.is_open())
+	if (file.is_open())
 	{
 		while (!file.eof())
 		{
@@ -29,7 +29,7 @@ Config_Parser::Config_Parser(const char *filename)
 	}
 	else
 	{
-		std::cout << RED "Error: Could not open config file." RESET << std::endl;
+		std::cout << RED << "Error: Could not open config file." << RESET << std::endl;
 		exit(1);
 	}
 }
@@ -49,6 +49,9 @@ std::vector<Server> *Config_Parser::parse()
 		pre = content.find_first_not_of(" \n\t", cur);
 		cur = content.find_first_of(" \n\t", pre);
 		std::string token = content.substr(pre, cur - pre);
+
+		std::cout << "Token found: [" << token << "]" << std::endl;
+		
 		if (token != "server")
 		{
 			print_parse_error();
@@ -64,94 +67,118 @@ std::vector<Server> *Config_Parser::parse()
 
 Server Config_Parser::parse_server(size_t *index)
 {
-	Server server;
-	size_t key_start;
-	size_t value_end;
+    Server server;
+    size_t key_start;
 
-	size_t pre = content.find_first_not_of(" \n\t", *index);
-	if (pre == std::string::npos || content[pre] != '{')
-		exit(print_parse_error());
+    size_t pre = content.find_first_not_of(" \n\t", *index);
+    
+    if (pre == std::string::npos || content[pre] != '{')
+        exit(print_parse_error());
 
-	pre++;
-	size_t cur = content.find_first_not_of(" \n\t", pre);
-	while(cur != std::string::npos)
-	{
-		if((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
-			exit(print_parse_error());
-		key_start = pre;
-		if ((cur = content.find_first_of(" \n\t", key_start)) == std::string::npos)
-			exit(print_parse_error());
-		std::string key = content.substr(key_start, cur - key_start);
-		if (key == "}")
-		{
-			*index = content.find_first_not_of(" \n\t", cur + 1);
-			break;
-		}
-		if (key == "location")
-		{
-			server.locations.push_back(parse_location(&cur));
-		}
-		else
-		{
-			if ((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
-				exit(print_parse_error());
-			if ((cur = content.find_first_of(" \n\t;", pre)) == std::string::npos)
-				exit(print_parse_error());
-			if ((value_end = content.find_first_not_of(" \n\t", cur + 1)) == std::string::npos)
-				exit(print_parse_error());
-			if ((int)value_end == EMPTY)
-				continue;
-			std::string value = content.substr(pre, value_end - pre + key_start + 1);
-			if (set_server_value(&server, key, value) == FAILURE)
-				exit(print_parse_error());
-		}
-	}
-	return server;
+    pre++;
+    size_t cur = content.find_first_not_of(" \n\t", pre);
+    
+    while(cur != std::string::npos)
+    {
+        if((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
+            exit(print_parse_error());
+        key_start = pre;
+        if ((cur = content.find_first_of(" \n\t", key_start)) == std::string::npos)
+            exit(print_parse_error());
+        std::string key = content.substr(key_start, cur - key_start);
+        
+        if (key == "}")
+        {
+            *index = content.find_first_not_of(" \n\t", cur + 1);
+            break;
+        }
+        if (key == "location")
+        {
+            server.locations.push_back(parse_location(&cur));
+        }
+        else
+        {
+            // Pular espaços após a key
+            if ((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
+                exit(print_parse_error());
+            
+            // Encontrar o fim do valor (antes do ;)
+            if ((cur = content.find_first_of(";", pre)) == std::string::npos)
+                exit(print_parse_error());
+            
+            // Extrair o valor (sem o ;)
+            std::string value = content.substr(pre, cur - pre);
+            
+            // Remover espaços no final do valor
+            size_t end = value.find_last_not_of(" \t");
+            if (end != std::string::npos)
+                value = value.substr(0, end + 1);
+            
+            if (set_server_value(&server, key, value) == FAILURE)
+                exit(print_parse_error());
+            
+            // Avançar para depois do ;
+            cur++;
+        }
+    }
+    return server;
 }
 
 Location Config_Parser::parse_location(size_t *index)
 {
-	Location location;
-	size_t key_start;
-	size_t value_end;
+    Location location;
+    size_t key_start;
 
-	size_t pre = content.find_first_not_of(" \n\t", *index);
-	size_t cur = content.find_first_of(" \n\t", pre);
-	location.path = content.substr(pre, cur - pre);
+    size_t pre = content.find_first_not_of(" \n\t", *index);
+    size_t cur = content.find_first_of(" \n\t", pre);
+    location.path = content.substr(pre, cur - pre);
 
-	pre = content.find_first_not_of(" \n\t", cur);
-	if (pre == std::string::npos || content[pre] != '{')
-		exit(print_parse_error());
-	pre++;
-	cur = content.find_first_not_of(" \n\t", pre);
-	while(cur != std::string::npos)
-	{
-		if ((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
-			exit(print_parse_error());
-		key_start = pre;
-		if ((cur = content.find_first_of(" \n\t", key_start)) == std::string::npos)
-			exit(print_parse_error());
-		std::string key = content.substr(pre, cur - pre);
-		if (key == "}")
-		{
-			*index = cur;
-			break;
-		}else
-		{
-			if ((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
-				exit(print_parse_error());
-			if ((cur = content.find_first_of(" \n\t;", pre)) == std::string::npos)
-				exit(print_parse_error());
-			if ((value_end = check_line_syntax(content.substr(key_start, cur - key_start))) == FAILURE)
-				exit(print_parse_error());
-			if ((int)value_end == EMPTY)
-				continue;
-			std::string value = content.substr(pre, value_end - pre + key_start + 1);
-			if (set_location_value(&location, key, value) == FAILURE)
-				exit(print_parse_error());
-		}
-	}
-	return location;
+    pre = content.find_first_not_of(" \n\t", cur);
+    if (pre == std::string::npos || content[pre] != '{')
+        exit(print_parse_error());
+    pre++;
+    cur = content.find_first_not_of(" \n\t", pre);
+    
+    while(cur != std::string::npos)
+    {
+        if ((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
+            exit(print_parse_error());
+        key_start = pre;
+        if ((cur = content.find_first_of(" \n\t", key_start)) == std::string::npos)
+            exit(print_parse_error());
+        std::string key = content.substr(pre, cur - pre);
+        
+        if (key == "}")
+        {
+            *index = cur;
+            break;
+        }
+        else
+        {
+            // Pular espaços após a key
+            if ((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
+                exit(print_parse_error());
+            
+            // Encontrar o fim do valor (antes do ;)
+            if ((cur = content.find_first_of(";", pre)) == std::string::npos)
+                exit(print_parse_error());
+            
+            // Extrair o valor (sem o ;)
+            std::string value = content.substr(pre, cur - pre);
+            
+            // Remover espaços no final do valor
+            size_t end = value.find_last_not_of(" \t");
+            if (end != std::string::npos)
+                value = value.substr(0, end + 1);
+            
+            if (set_location_value(&location, key, value) == FAILURE)
+                exit(print_parse_error());
+            
+            // Avançar para depois do ;
+            cur++;
+        }
+    }
+    return location;
 }
 
 int Config_Parser::set_server_value(Server *server, const std::string key, const std::string value)
@@ -287,6 +314,6 @@ int Config_Parser::check_line_syntax(std::string line)
 
 int Config_Parser::print_parse_error()
 {
-	std::cout << RED "[ERROR]: Config parsing failed." RESET << std::endl;
+	std::cout << RED << "[ERROR]: Config parsing failed." << RESET << std::endl;
 	return FAILURE;
 }

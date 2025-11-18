@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 09:37:16 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/11 09:37:17 by gabastos         ###   ########.fr       */
+/*   Updated: 2025/11/18 10:25:03 by gcosta-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,7 @@ int CgiHandler::write_to_CGI_process()
 				);
 	if (wbyte == -1)
 	{
-		std::cout << RED "[ERROR] cgihandler : write failed.\n" WHT;
+		std::cout << RED "[ERROR] cgihandler : write failed.\n" << WHT;
 		alarm(30);
 		waitpid(-1, NULL, 0);
 		return -1;

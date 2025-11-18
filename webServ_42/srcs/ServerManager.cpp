@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerManager.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 11:46:40 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/03 11:46:41 by gabastos         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:21:16 by gcosta-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ ServerManager::ServerManager(std::vector<Server> servers)
 		if (!this->servers[_servers[i].server_name + ":" + _servers[i].port])
 			this->servers[_servers[i].server_name + ":" + _servers[i].port] = &_servers[i];
 		else
-			std::cout << YLW "! ignore already exist server block !\n";
+			std::cout << YELLOW << "! ignore already exist server block !\n";
 	}
 }
 
@@ -285,7 +285,7 @@ void ServerManager::treat_request()
 				{
 					if (is_response_timeout(clients[i]) == true)
 						send_error_page(408, clients[i]);
-					if (clients[i].server->redirect_status != -1)
+					else if (clients[i].server->redirect_status != -1)
 						send_redirection(clients[i], req.method);
 					else if (req.method == "GET")
 						get_method(clients[i], req.path);

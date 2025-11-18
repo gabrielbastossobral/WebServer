@@ -1,4 +1,4 @@
-#include  "Request.hpp"
+#include  "../includes/Request.hpp"
 
 Request::Request(int client_fd)
 {
@@ -55,9 +55,20 @@ static std::string parse_request_body(std::string& request, int index)
 
 static int parse_headers_line(std::map<std::string, std::string>& headers, std::string& request, int index)
 {
-    int deli= request.find_first_of(":", index);
+    int deli = request.find_first_of(":", index);
     int end = request.find_first_of("\r\n", deli);
-    headers[request.substr(index, deli - index)] = request.substr(deli + 2, end - deli - 2);
+    
+    // Extrair header name e remover espaços/quebras de linha no início
+    std::string header_name = request.substr(index, deli - index);
+    size_t name_start = header_name.find_first_not_of(" \t\r\n");
+    if (name_start != std::string::npos)
+        header_name = header_name.substr(name_start);
+    
+    // Extrair header value (já remove o espaço após o ':')
+    std::string header_value = request.substr(deli + 2, end - deli - 2);
+    
+    headers[header_name] = header_value;
+    
     return end;
 }
 
@@ -67,18 +78,56 @@ int Request::parsing(std::string request)
     int j;
 
     std::cout << " Request parsing\n";
+    
+    // ===== DEBUG: MOSTRAR REQUEST COMPLETO =====
+    std::cout << YELLOW << "=== RAW REQUEST ===" << RESET << std::endl;
+    std::cout << "[" << request << "]" << std::endl;
+    std::cout << "Request size: " << request.size() << " bytes" << std::endl;
+    std::cout << YELLOW << "===================" << RESET << std::endl;
+    // ===========================================
+    
     i = request.find_first_of(" ", 0);
     method = request.substr(0, i);
+    
+    // ===== DEBUG: MOSTRAR METHOD =====
+    std::cout << "Parsed Method: [" << method << "]" << std::endl;
+    // =================================
+    
     if (method == "PUT")
+    {
+        std::cout << RED << "PUT method not supported (returning 200)" << RESET << std::endl;
         return 200;
+    }
     if (is_not_method(method))
+    {
+        std::cout << RED << "Invalid method detected: [" << method << "]" << RESET << std::endl;
         return 400;
+    }
+    
     if ((unsigned long)(j = request.find_first_of(" ", i + 1)) == std::string::npos)
+    {
+        std::cout << RED << "No second space found in request line" << RESET << std::endl;
         return 400;
+    }
+    
     path = request.substr(i + 1, j - i - 1);
+    
+    // ===== DEBUG: MOSTRAR PATH =====
+    std::cout << "Parsed Path: [" << path << "]" << std::endl;
+    // ===============================
+    
     headers["HTTP"] = request.substr(j + 1, request.find_first_of("\r" ,i) - j - 1);
+    
+    // ===== DEBUG: MOSTRAR HTTP VERSION =====
+    std::cout << "Parsed HTTP Version: [" << headers["HTTP"] << "]" << std::endl;
+    // =======================================
+    
     if (check_protocol(headers["HTTP"]) == false)
+    {
+        std::cout << RED << "Invalid HTTP protocol version" << RESET << std::endl;
         return 505;
+    }
+    
     i = request.find_first_of("\r\n", j) + 1;
     while (i < request.size())
     {
@@ -100,8 +149,23 @@ int Request::parsing(std::string request)
             break ;
         i = end + 2;
     }
+    
+    // ===== DEBUG: MOSTRAR HEADERS =====
+    std::cout << "Parsed Headers:" << std::endl;
+    for (std::map<std::string, std::string>::iterator it = headers.begin(); 
+         it != headers.end(); ++it)
+    {
+        std::cout << "  [" << it->first << "] = [" << it->second << "]" << std::endl;
+    }
+    // ==================================
+    
     if (headers["Host"] == "")
+    {
+        std::cout << RED << "Host header is missing or empty" << RESET << std::endl;
         return 400;
+    }
+    
+    std::cout << GREEN << "Request parsed successfully!" << RESET << std::endl;
     return 0;
 }
 
