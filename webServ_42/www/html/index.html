@@ -6,6 +6,79 @@
 	<title>Webserver</title>
 </head>
 <body>
-	<p>Webserver</p>
+	 <div class="container">
+        <h1>🚀 WebServ 42 - HTTP Tester</h1>
+        
+        <!-- GET Methods -->
+        <div class="section">
+            <h2>GET Requests</h2>
+            <div class="button-group">
+                <button class="btn-get" onclick="testGet('/')">GET /</button>
+                <button class="btn-get" onclick="testGet('/index.html')">GET /index.html</button>
+                <button class="btn-get" onclick="testGet('/notfound.html')">GET 404</button>
+                <button class="btn-get" onclick="testGet('/test/page.html')">GET /test/page.html</button>
+            </div>
+            <div class="input-group">
+                <label>Custom GET Path:</label>
+                <input type="text" id="customGetPath" placeholder="/your/custom/path">
+                <button class="btn-get" onclick="testCustomGet()">Send GET</button>
+            </div>
+        </div>
+
+        <!-- POST Methods -->
+        <div class="section">
+            <h2>POST Requests</h2>
+            <div class="input-group">
+                <label>POST Path:</label>
+                <input type="text" id="postPath" value="/upload" placeholder="/path/to/post">
+                <label>POST Body:</label>
+                <textarea id="postBody" placeholder='{"name": "test", "value": "data"}'></textarea>
+                <button class="btn-post" onclick="testPost()">Send POST</button>
+                <button class="btn-post" onclick="testPostForm()">Send POST (Form Data)</button>
+            </div>
+        </div>
+
+        <!-- DELETE Methods -->
+        <div class="section">
+            <h2>DELETE Requests</h2>
+            <div class="input-group">
+                <label>DELETE Path:</label>
+                <input type="text" id="deletePath" value="/upload/test.txt" placeholder="/file/to/delete">
+                <button class="btn-delete" onclick="testDelete()">Send DELETE</button>
+            </div>
+        </div>
+
+        <!-- File Upload -->
+        <div class="section">
+            <h2>File Upload</h2>
+            <div class="input-group">
+                <label>Select File:</label>
+                <input type="file" id="fileUpload">
+                <button class="btn-upload" onclick="testFileUpload()">Upload File</button>
+            </div>
+        </div>
+
+        <!-- CGI Test -->
+        <div class="section">
+            <h2>CGI Test</h2>
+            <div class="button-group">
+                <button class="btn-cgi" onclick="testCGI('/cgi-bin/test.py')">Test Python CGI</button>
+                <button class="btn-cgi" onclick="testCGI('/cgi-bin/test.sh')">Test Shell CGI</button>
+            </div>
+            <div class="input-group">
+                <label>Custom CGI Path:</label>
+                <input type="text" id="cgiPath" placeholder="/cgi-bin/script.py">
+                <button class="btn-cgi" onclick="testCustomCGI()">Run CGI</button>
+            </div>
+        </div>
+
+        <!-- Response Display -->
+        <div class="section">
+            <h2>Response</h2>
+            <div id="response">Waiting for request...</div>
+        </div>
+    </div>
+
+    <script src="./js/tests.js"></script>
 </body>
 </html>
