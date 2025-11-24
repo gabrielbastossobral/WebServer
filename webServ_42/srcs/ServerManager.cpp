@@ -326,7 +326,10 @@ void ServerManager::get_method(Client &client, std::string path)
     FILE *fp = fopen(full_path.c_str(), "rb");
     std::cout << "> " + full_path + ", " + (fp == NULL ? "not found\n" : "found\n");
     if (!fp)
+	{
         send_error_page(404, client);
+		return;
+	}
     else
     {
         if (S_ISDIR(buf.st_mode))
