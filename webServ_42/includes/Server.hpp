@@ -17,6 +17,7 @@
 # include <sys/socket.h>
 # include <netdb.h>
 # include <fcntl.h>
+# include <cstdio>
 # include "Location.hpp"
 
 class Server

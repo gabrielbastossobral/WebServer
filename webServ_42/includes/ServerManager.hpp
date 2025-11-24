@@ -17,6 +17,8 @@
 # include <sys/time.h>
 # include <dirent.h>
 # include <cstdio>
+# include <cstdlib>
+# include <sstream> 
 # include <sys/stat.h>
 # include <fstream>
 # include <string.h>
