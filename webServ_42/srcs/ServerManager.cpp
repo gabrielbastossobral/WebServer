@@ -666,94 +666,94 @@ static void set_signal_kill_child_process(int sig)
 
 void ServerManager::handle_cgi_GET_response(Response& res, std::string& cgi_ret, Client &client)
 {
-    std::stringstream ss(cgi_ret);
-    size_t tmpi;
-    std::string tmp;
-    std::string body;
-
-    res.append_header("Server", client.server->server_name);
-    res.append_header("Connection", "close");
-    while (getline(ss, tmp, '\n'))
+    (void)client; // Para evitar warning de parâmetro não usado
+    
+    std::cout << "[DEBUG] Handling CGI GET response" << std::endl;
+    std::cout << "[DEBUG] CGI output length: " << cgi_ret.length() << std::endl;
+    
+    // Encontrar a linha vazia que separa headers do body
+    size_t body_start = cgi_ret.find("\r\n\r\n");
+    
+    if (body_start == std::string::npos)
     {
-        if (tmp.length() == 1 && tmp[0] == '\r')
-            break ;
-        size_t mid_deli = tmp.find(":");
-        size_t end_deli = tmp.find("\n");
-        if (tmp[end_deli] == '\r')
+        // Tentar com apenas \n\n (Unix style)
+        body_start = cgi_ret.find("\n\n");
+        if (body_start != std::string::npos)
         {
-            tmp.erase(tmp.length() - 1, 1);
-            end_deli -= 1;
+            body_start += 2; // Pular os dois \n
         }
-        if ((tmpi = tmp.find(";")) != std::string::npos)
-            tmp = tmp.substr(0, tmpi);
-        std::string key = tmp.substr(0, mid_deli);
-        std::string value = tmp.substr(mid_deli + 1, end_deli);
-        res.append_header(key, value);
+        else
+        {
+            std::cout << "[ERROR] No header/body separator found in CGI output" << std::endl;
+            return;
+        }
     }
-    while (getline(ss, tmp, '\n'))
+    else
     {
-        body += tmp;
-        body += "\n";
+        body_start += 4; // Pular \r\n\r\n
     }
+    
+    std::cout << "[DEBUG] Body starts at position: " << body_start << std::endl;
+    
+    // Extrair headers
+    std::string headers = cgi_ret.substr(0, body_start);
+    std::cout << "[DEBUG] Headers:\n" << headers << std::endl;
+    
+    // Extrair body (o resto após o separador)
+    std::string body;
+    if (body_start < cgi_ret.length())
+    {
+        body = cgi_ret.substr(body_start);
+    }
+    
+    std::cout << "[DEBUG] Body length: " << body.length() << std::endl;
+    
+    // Processar headers do CGI
+    size_t pos = 0;
+    while (pos < headers.length())
+    {
+        size_t line_end = headers.find("\n", pos);
+        if (line_end == std::string::npos)
+            break;
+        
+        std::string line = headers.substr(pos, line_end - pos);
+        
+        // Remover \r se existir
+        if (!line.empty() && line[line.length() - 1] == '\r')
+            line = line.substr(0, line.length() - 1);
+        
+        // Processar header
+        size_t colon = line.find(":");
+        if (colon != std::string::npos)
+        {
+            std::string key = line.substr(0, colon);
+            std::string value = line.substr(colon + 1);
+            
+            // Remover espaços em branco
+            while (!value.empty() && value[0] == ' ')
+                value = value.substr(1);
+            
+            std::cout << "[DEBUG] CGI Header: " << key << " = " << value << std::endl;
+            res.append_header(key, value); // ← MUDANÇA: append_header ao invés de set_header
+        }
+        
+        pos = line_end + 1;
+    }
+    
+    // Definir o body da resposta
     res.set_body(body);
-    res.append_header("Content-Length", int_to_string(res.get_body_size()));
+    res.append_header("Content-Length", NumberToString(body.length())); // ← MUDANÇA: append_header
+    
+    std::cout << "[DEBUG] Response prepared successfully" << std::endl;
 }
 
 void ServerManager::handle_cgi_POST_response(Response& res, std::string& cgi_ret, Client &client, Request& request)
 {
-    std::stringstream ss(cgi_ret);
-    size_t tmpi;
-    std::string tmp;
-    std::string body;
-
-    res.append_header("Server", client.server->server_name);
-    res.append_header("Connection", "close");
-    while (getline(ss, tmp, '\n'))
-    {
-        if (tmp.length() == 1 && tmp[0] == '\r')
-            break ;
-        size_t mid_deli = tmp.find(":");
-        size_t end_deli = tmp.find("\n");
-        if (tmp[end_deli] == '\r')
-        {
-            tmp.erase(tmp.length() - 1, 1);
-            end_deli -= 1;
-        }
-        if ((tmpi = tmp.find(";")) != std::string::npos)
-            tmp = tmp.substr(0, tmpi);
-        std::string key = tmp.substr(0, mid_deli);
-        std::string value = tmp.substr(mid_deli + 1, end_deli);
-        res.append_header(key, value);
-    }
-    while (getline(ss, tmp, '\n'))
-    {
-        body += tmp;
-        body += "\n";
-    }
+    std::cout << "[DEBUG] Handling CGI POST response" << std::endl;
+    (void) request;
     
-    std::string full_path = find_path_in_root(request.path, client);
-    size_t index = full_path.find_last_of("/");
-    if (index == std::string::npos)
-    {
-        send_error_page(500, client);
-        return;
-    }
-
-    std::string file_name = full_path.substr(index + 1);
-    std::string folder_path = full_path.substr(0, index);
-
-    std::string command = "mkdir -p " + folder_path;
-    system(command.c_str());
-    FILE *fp = fopen(full_path.c_str(), "w");
-    if (!fp)
-    {
-        send_error_page(500, client);
-        return;
-    }
-    fwrite(body.c_str(), body.size(), 1, fp);
-    fclose(fp);
-
-    res.append_header("Content-Length", int_to_string(res.get_body_size()));
+    // Usar a mesma lógica do GET
+    handle_cgi_GET_response(res, cgi_ret, client);
 }
 
 int ServerManager::send_cgi_response(Client& client, CgiHandler& ch, Request& req)

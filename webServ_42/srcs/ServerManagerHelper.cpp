@@ -153,21 +153,28 @@ std::string ServerManager::find_path_in_root(std::string path, Client &client)
 
 std::string ServerManager::get_status_cgi(std::string& cgi_ret)
 {
-    std::string status_line;
-    std::stringstream ss(cgi_ret);
-
-    std::string line;
-    while (getline(ss, line, '\n'))
+    std::string ret;
+    size_t pos = cgi_ret.find("Status:");
+    
+    if (pos == std::string::npos)
     {
-        if (line.substr(0, 6) == "Status")
-            status_line = line;
+        // Se não tem Status: na resposta, assumir 200 OK
+        std::cout << "[DEBUG] No Status header found, assuming 200 OK" << std::endl;
+        return "200";
     }
-    if (status_line.empty())
-        return status_line;
-    cgi_ret.erase(0, status_line.length() + 1);
-    status_line.erase(0, 8);
-    status_line.erase(status_line.length() - 1, 1);
-    return status_line;
+    
+    size_t end = cgi_ret.find("\n", pos);
+    if (end == std::string::npos)
+        return "";
+    
+    std::string status_line = cgi_ret.substr(pos, end - pos);
+    size_t space = status_line.find(" ");
+    if (space == std::string::npos)
+        return "";
+    
+    ret = status_line.substr(space + 1, 3);
+    std::cout << "[DEBUG] Found Status: " << ret << std::endl;
+    return ret;
 }
 
 void	ServerManager::write_file_in_path(Client &client, std::string content, std::string path)

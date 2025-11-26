@@ -83,13 +83,30 @@ MethodType Location::s_to_methodtype(std::string str)
 
 std::string Location::getCgiBinary(std::string &extension)
 {
-	for (std::map<std::string, std::string>::const_iterator it = this->cgi_info.begin();
-	it != this->cgi_info.end(); ++it)
-	{
-		if (it->first == "." + extension)
-			return it->second;
-	}
-	return "";
+	std::cerr << "[DEBUG] Looking for CGI binary for extension: " << extension << std::endl;
+    std::cerr << "[DEBUG] CGI map size: " << this->cgi_info.size() << std::endl;
+    
+    // Primeiro tenta com a extensão sem ponto
+    std::map<std::string, std::string>::const_iterator it = this->cgi_info.find(extension);
+    
+    if (it != this->cgi_info.end())
+    {
+        std::cerr << "[DEBUG] Found CGI binary (without dot): " << it->second << std::endl;
+        return it->second;
+    }
+    
+    // Depois tenta com ponto
+    it = this->cgi_info.find("." + extension);
+    
+    if (it != this->cgi_info.end())
+    {
+        std::cerr << "[DEBUG] Found CGI binary (with dot): " << it->second << std::endl;
+        return it->second;
+    }
+    
+    std::cerr << "[DEBUG] CGI binary not found for extension: " << extension << std::endl;
+    
+    return "";
 }
 
 std::string Location::get_root(void)
