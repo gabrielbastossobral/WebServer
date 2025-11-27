@@ -1,5 +1,4 @@
 #!/bin/bash
-# filepath: /home/gbriel/WebServer/webServ_42/www/html/cgi-bin/test.sh
 
 echo "Content-Type: text/html"
 echo ""

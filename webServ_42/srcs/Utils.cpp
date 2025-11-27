@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 10:53:32 by gcosta-m          #+#    #+#             */
-/*   Updated: 2025/11/18 10:53:35 by gcosta-m         ###   ########.fr       */
+/*   Updated: 2025/11/27 15:00:29 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ int replace(std::string original, std::string to_replace, std::string replacemen
 	return -1;
 }
 
-// escapar caracteres especiais em HTML
 static std::string html_escape(const std::string &input)
 {
 	std::string output;
@@ -45,7 +44,6 @@ static std::string html_escape(const std::string &input)
 	return output;
 }
 
-// URL-encode uma string para uso em links
 static std::string url_encode(const std::string &input)
 {
 	std::ostringstream escaped;
@@ -68,7 +66,6 @@ static std::string url_encode(const std::string &input)
 }
 
 
-// Verifica se o nome do arquivo/diretório é seguro para exibição e linkagem
 static bool is_safe_name(const std::string &name)
 {
 	if (name.empty()) return false;
@@ -99,10 +96,6 @@ static bool is_safe_name(const std::string &name)
 	return true;
 }
 
-
-//lista o conteúdo de um diretório em formato HTML
-//aplica html_escape e url_encode conforme necessário
-//url_encode apenas em nomes considerados seguros
 std::string dir_listing(const std::string &path = "www/html/data/")
 {
 	DIR *dir = opendir(path.c_str());

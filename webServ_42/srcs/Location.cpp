@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/04 10:19:20 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/18 10:30:17 by gcosta-m         ###   ########.fr       */
+/*   Updated: 2025/11/27 15:00:49 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void Location::print_location_info()
     std::cout << "> path: " << path << "\n";
     std::cout << "> root: " << root << "\n";
     
-    // Iterar sobre o vector de index
     std::cout << "> index: ";
     for (std::vector<std::string>::iterator it = index.begin(); it != index.end(); ++it)
     {
@@ -38,11 +37,9 @@ void Location::print_location_info()
     }
     std::cout << "\n";
     
-    // Iterar sobre o vector de allow_methods
     std::cout << "> allow_methods: ";
     for (std::vector<MethodType>::iterator it = allow_methods.begin(); it != allow_methods.end(); ++it)
     {
-        // Converter MethodType para string
         if (*it == GET)
             std::cout << "GET";
         else if (*it == POST)
@@ -57,7 +54,6 @@ void Location::print_location_info()
     }
     std::cout << "\n";
     
-    // Iterar sobre o map de cgi_info
     for (std::map<std::string, std::string>::iterator i = cgi_info.begin(); i != cgi_info.end(); i++)
     {
         std::cout << "> cgi_info: " << (*i).first << ", " << (*i).second << "\n";
@@ -83,28 +79,21 @@ MethodType Location::s_to_methodtype(std::string str)
 
 std::string Location::getCgiBinary(std::string &extension)
 {
-	std::cerr << "[DEBUG] Looking for CGI binary for extension: " << extension << std::endl;
-    std::cerr << "[DEBUG] CGI map size: " << this->cgi_info.size() << std::endl;
-    
-    // Primeiro tenta com a extensão sem ponto
+
     std::map<std::string, std::string>::const_iterator it = this->cgi_info.find(extension);
     
     if (it != this->cgi_info.end())
     {
-        std::cerr << "[DEBUG] Found CGI binary (without dot): " << it->second << std::endl;
         return it->second;
     }
     
-    // Depois tenta com ponto
     it = this->cgi_info.find("." + extension);
     
     if (it != this->cgi_info.end())
     {
-        std::cerr << "[DEBUG] Found CGI binary (with dot): " << it->second << std::endl;
         return it->second;
     }
     
-    std::cerr << "[DEBUG] CGI binary not found for extension: " << extension << std::endl;
     
     return "";
 }

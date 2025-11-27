@@ -13,7 +13,6 @@ void ServerManager::print_servers_info()
 
 bool	ServerManager::is_allowed_method(std::vector<MethodType> allow_methods, std::string method) 
 {
-    std::cout << GREEN << "[DEBUG] Checking allowed method: " << method << RESET << std::endl;
     if (method == "GET")
         return true;
     for (std::vector<MethodType>::iterator it = allow_methods.begin(); 
@@ -27,11 +26,9 @@ bool	ServerManager::is_allowed_method(std::vector<MethodType> allow_methods, std
 
 bool	ServerManager::is_loc_check(std::string path, Client &client)
 {
-    std::cout << GREEN << "[DEBUG] Checking location for path: " << path << RESET << std::endl;
     Location *cur_loc = client.server->get_cur_location(path);
     if (!cur_loc)
     {
-        std::cout << YELLOW << "[DEBUG] No location found" << RESET << std::endl;
         return false;
     }
     std::string root = cur_loc->path;
@@ -81,7 +78,6 @@ bool ServerManager::is_response_timeout(Client& client)
     gettimeofday(&tv, NULL);
     if (tv.tv_sec - client.get_last_time().tv_sec > client.server->recv_timeout.tv_sec)
 	{
-        std::cout << RED << "[DEBUG] Timeout detected!" << RESET << std::endl;
         return true;
     }
     client.set_last_time_sec(tv);
@@ -90,7 +86,6 @@ bool ServerManager::is_response_timeout(Client& client)
 
 bool	ServerManager::is_cgi(Request *request, Location *loc)
 {
-    std::cout << GREEN << "[DEBUG] Checking if is CGI request" << RESET << std::endl;
     for (std::map<std::string, std::string>::iterator it = loc->cgi_info.begin();
     it != loc->cgi_info.end(); it++)
     {
@@ -115,7 +110,6 @@ std::string ServerManager::methodtype_to_s(MethodType method)
 
 const char *ServerManager::find_content_type(const char *path)
 {
-    std::cout << GREEN << "[DEBUG] Finding content type for: " << path << RESET << std::endl;
     const char *last_dot = strrchr(path, '.');
     if (last_dot)
     {
@@ -136,7 +130,6 @@ const char *ServerManager::find_content_type(const char *path)
 
 std::string ServerManager::find_path_in_root(std::string path, Client &client)
 {
-    std::cout << GREEN << "[DEBUG] Finding path in root: " << path << RESET << std::endl;
     std::string full_path = "";
     std::string location;
     full_path.append(client.get_root_path(path));
@@ -147,7 +140,6 @@ std::string ServerManager::find_path_in_root(std::string path, Client &client)
         location = "";
     std::string str = path.substr(location.length());
     full_path.append(str);
-    std::cout << GREEN << "[DEBUG] Full path: " << full_path << RESET << std::endl;
     return full_path;
 }
 
@@ -158,8 +150,6 @@ std::string ServerManager::get_status_cgi(std::string& cgi_ret)
     
     if (pos == std::string::npos)
     {
-        // Se não tem Status: na resposta, assumir 200 OK
-        std::cout << "[DEBUG] No Status header found, assuming 200 OK" << std::endl;
         return "200";
     }
     
@@ -173,13 +163,11 @@ std::string ServerManager::get_status_cgi(std::string& cgi_ret)
         return "";
     
     ret = status_line.substr(space + 1, 3);
-    std::cout << "[DEBUG] Found Status: " << ret << std::endl;
     return ret;
 }
 
 void	ServerManager::write_file_in_path(Client &client, std::string content, std::string path)
 {
-    std::cout << YELLOW << "[DEBUG] Writing file to: " << path << RESET << std::endl;
     std::cout << "> write in: " << path << "\n";
     size_t index = path.find_last_of("/");
     std::string file_name = path.substr(index + 1);
@@ -190,12 +178,10 @@ void	ServerManager::write_file_in_path(Client &client, std::string content, std:
     FILE *fp = fopen(path.c_str(), "w");
     if (!fp)
     {
-        std::cout << RED << "[DEBUG] Failed to open file for writing" << RESET << std::endl;
         send_error_page(500, client);
         return;
     }
 
     fwrite(content.c_str(), content.size(), 1, fp);
     fclose(fp);
-    std::cout << GREEN << "[DEBUG] File written successfully" << RESET << std::endl;
 }

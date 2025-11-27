@@ -11,6 +11,9 @@ result = sum(i * i for i in range(iterations))
 
 elapsed = time.time() - start
 
+while(1)
+	print(12)
+
 print("Content-Type: text/html")
 print()
 

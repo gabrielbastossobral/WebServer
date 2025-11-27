@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerManager.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 11:46:40 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/18 14:21:16 by gcosta-m         ###   ########.fr       */
+/*   Updated: 2025/11/27 15:00:36 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,6 @@ void ServerManager::run_selectPoll(fd_set *reads, fd_set *writes)
 
 void ServerManager::wait_to_client()
 {
-    // int recv;
     fd_set reads;
     fd_set writes;
 
@@ -666,21 +665,15 @@ static void set_signal_kill_child_process(int sig)
 
 void ServerManager::handle_cgi_GET_response(Response& res, std::string& cgi_ret, Client &client)
 {
-    (void)client; // Para evitar warning de parâmetro não usado
-    
-    std::cout << "[DEBUG] Handling CGI GET response" << std::endl;
-    std::cout << "[DEBUG] CGI output length: " << cgi_ret.length() << std::endl;
-    
-    // Encontrar a linha vazia que separa headers do body
+    (void)client;
     size_t body_start = cgi_ret.find("\r\n\r\n");
     
     if (body_start == std::string::npos)
     {
-        // Tentar com apenas \n\n (Unix style)
         body_start = cgi_ret.find("\n\n");
         if (body_start != std::string::npos)
         {
-            body_start += 2; // Pular os dois \n
+            body_start += 2;
         }
         else
         {
@@ -690,25 +683,15 @@ void ServerManager::handle_cgi_GET_response(Response& res, std::string& cgi_ret,
     }
     else
     {
-        body_start += 4; // Pular \r\n\r\n
+        body_start += 4;
     }
-    
-    std::cout << "[DEBUG] Body starts at position: " << body_start << std::endl;
-    
-    // Extrair headers
     std::string headers = cgi_ret.substr(0, body_start);
-    std::cout << "[DEBUG] Headers:\n" << headers << std::endl;
-    
-    // Extrair body (o resto após o separador)
     std::string body;
     if (body_start < cgi_ret.length())
     {
         body = cgi_ret.substr(body_start);
     }
     
-    std::cout << "[DEBUG] Body length: " << body.length() << std::endl;
-    
-    // Processar headers do CGI
     size_t pos = 0;
     while (pos < headers.length())
     {
@@ -718,41 +701,32 @@ void ServerManager::handle_cgi_GET_response(Response& res, std::string& cgi_ret,
         
         std::string line = headers.substr(pos, line_end - pos);
         
-        // Remover \r se existir
         if (!line.empty() && line[line.length() - 1] == '\r')
             line = line.substr(0, line.length() - 1);
         
-        // Processar header
         size_t colon = line.find(":");
         if (colon != std::string::npos)
         {
             std::string key = line.substr(0, colon);
             std::string value = line.substr(colon + 1);
             
-            // Remover espaços em branco
             while (!value.empty() && value[0] == ' ')
                 value = value.substr(1);
             
-            std::cout << "[DEBUG] CGI Header: " << key << " = " << value << std::endl;
-            res.append_header(key, value); // ← MUDANÇA: append_header ao invés de set_header
+            res.append_header(key, value);
         }
         
         pos = line_end + 1;
     }
     
-    // Definir o body da resposta
     res.set_body(body);
-    res.append_header("Content-Length", NumberToString(body.length())); // ← MUDANÇA: append_header
+    res.append_header("Content-Length", NumberToString(body.length()));
     
-    std::cout << "[DEBUG] Response prepared successfully" << std::endl;
 }
 
 void ServerManager::handle_cgi_POST_response(Response& res, std::string& cgi_ret, Client &client, Request& request)
 {
-    std::cout << "[DEBUG] Handling CGI POST response" << std::endl;
     (void) request;
-    
-    // Usar a mesma lógica do GET
     handle_cgi_GET_response(res, cgi_ret, client);
 }
 

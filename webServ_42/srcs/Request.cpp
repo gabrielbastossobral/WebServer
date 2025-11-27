@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Request.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/27 14:54:14 by gabastos          #+#    #+#             */
+/*   Updated: 2025/11/27 15:00:44 by gabastos         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include  "../includes/Request.hpp"
 
 Request::Request(int client_fd)
@@ -58,13 +70,11 @@ static int parse_headers_line(std::map<std::string, std::string>& headers, std::
     int deli = request.find_first_of(":", index);
     int end = request.find_first_of("\r\n", deli);
     
-    // Extrair header name e remover espaços/quebras de linha no início
     std::string header_name = request.substr(index, deli - index);
     size_t name_start = header_name.find_first_not_of(" \t\r\n");
     if (name_start != std::string::npos)
         header_name = header_name.substr(name_start);
     
-    // Extrair header value (já remove o espaço após o ':')
     std::string header_value = request.substr(deli + 2, end - deli - 2);
     
     headers[header_name] = header_value;
@@ -79,19 +89,9 @@ int Request::parsing(std::string request)
 
     std::cout << " Request parsing\n";
     
-    // ===== DEBUG: MOSTRAR REQUEST COMPLETO =====
-    std::cout << YELLOW << "=== RAW REQUEST ===" << RESET << std::endl;
-    std::cout << "[" << request << "]" << std::endl;
-    std::cout << "Request size: " << request.size() << " bytes" << std::endl;
-    std::cout << YELLOW << "===================" << RESET << std::endl;
-    // ===========================================
-    
     i = request.find_first_of(" ", 0);
     method = request.substr(0, i);
-    
-    // ===== DEBUG: MOSTRAR METHOD =====
-    std::cout << "Parsed Method: [" << method << "]" << std::endl;
-    // =================================
+
     
     if (method == "PUT")
     {
@@ -112,15 +112,9 @@ int Request::parsing(std::string request)
     
     path = request.substr(i + 1, j - i - 1);
     
-    // ===== DEBUG: MOSTRAR PATH =====
-    std::cout << "Parsed Path: [" << path << "]" << std::endl;
-    // ===============================
     
     headers["HTTP"] = request.substr(j + 1, request.find_first_of("\r" ,i) - j - 1);
     
-    // ===== DEBUG: MOSTRAR HTTP VERSION =====
-    std::cout << "Parsed HTTP Version: [" << headers["HTTP"] << "]" << std::endl;
-    // =======================================
     
     if (check_protocol(headers["HTTP"]) == false)
     {
@@ -150,14 +144,12 @@ int Request::parsing(std::string request)
         i = end + 2;
     }
     
-    // ===== DEBUG: MOSTRAR HEADERS =====
     std::cout << "Parsed Headers:" << std::endl;
     for (std::map<std::string, std::string>::iterator it = headers.begin(); 
          it != headers.end(); ++it)
     {
         std::cout << "  [" << it->first << "] = [" << it->second << "]" << std::endl;
     }
-    // ==================================
     
     if (headers["Host"] == "")
     {

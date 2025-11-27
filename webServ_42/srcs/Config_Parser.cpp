@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config_Parser.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 10:31:29 by gcosta-m          #+#    #+#             */
-/*   Updated: 2025/11/18 11:14:20 by gcosta-m         ###   ########.fr       */
+/*   Updated: 2025/11/27 15:00:52 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,18 +98,14 @@ Server Config_Parser::parse_server(size_t *index)
         }
         else
         {
-            // Pular espaços após a key
             if ((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
                 exit(print_parse_error());
             
-            // Encontrar o fim do valor (antes do ;)
             if ((cur = content.find_first_of(";", pre)) == std::string::npos)
                 exit(print_parse_error());
             
-            // Extrair o valor (sem o ;)
             std::string value = content.substr(pre, cur - pre);
             
-            // Remover espaços no final do valor
             size_t end = value.find_last_not_of(" \t");
             if (end != std::string::npos)
                 value = value.substr(0, end + 1);
@@ -117,7 +113,6 @@ Server Config_Parser::parse_server(size_t *index)
             if (set_server_value(&server, key, value) == FAILURE)
                 exit(print_parse_error());
             
-            // Avançar para depois do ;
             cur++;
         }
     }
@@ -155,18 +150,14 @@ Location Config_Parser::parse_location(size_t *index)
         }
         else
         {
-            // Pular espaços após a key
             if ((pre = content.find_first_not_of(" \n\t", cur)) == std::string::npos)
                 exit(print_parse_error());
             
-            // Encontrar o fim do valor (antes do ;)
             if ((cur = content.find_first_of(";", pre)) == std::string::npos)
                 exit(print_parse_error());
             
-            // Extrair o valor (sem o ;)
             std::string value = content.substr(pre, cur - pre);
             
-            // Remover espaços no final do valor
             size_t end = value.find_last_not_of(" \t");
             if (end != std::string::npos)
                 value = value.substr(0, end + 1);
@@ -174,7 +165,6 @@ Location Config_Parser::parse_location(size_t *index)
             if (set_location_value(&location, key, value) == FAILURE)
                 exit(print_parse_error());
             
-            // Avançar para depois do ;
             cur++;
         }
     }

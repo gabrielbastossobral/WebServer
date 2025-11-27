@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gcosta-m <gcosta-m@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gabastos <gabastos@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 09:37:16 by gabastos          #+#    #+#             */
-/*   Updated: 2025/11/18 10:25:03 by gcosta-m         ###   ########.fr       */
+/*   Updated: 2025/11/27 14:50:55 by gabastos         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ void CgiHandler::load_file_resource(Request &request)
 {
     if (request.method == "GET")
     {
-        // Usar PATH_TRANSLATED que já foi calculado corretamente
         std::string full_path = this->env["PATH_TRANSLATED"];
         
         std::cout << "[DEBUG] Loading CGI file from PATH_TRANSLATED: " << full_path << std::endl;
@@ -78,7 +77,6 @@ void CgiHandler::load_file_resource(Request &request)
         {
             std::cerr << "[ERROR] Cannot open CGI file: " << full_path << std::endl;
             std::cerr << "[ERROR] errno: " << strerror(errno) << std::endl;
-            // NÃO lançar exceção, apenas retornar (será tratado no excute_CGI)
             return;
         }
         
@@ -99,7 +97,7 @@ void CgiHandler::load_file_resource(Request &request)
         std::cout << "[DEBUG] CGI file loaded successfully (" << this->file_resource.size() << " bytes)" << std::endl;
         
         fclose(this->resource_p);
-        this->resource_p = NULL; // Importante para não tentar fechar de novo
+        this->resource_p = NULL;
     }
     else if (request.method == "POST")
     {
@@ -174,12 +172,7 @@ int CgiHandler::excute_CGI(Request &req, Location &loc)
         std::string cgi_binary = loc.getCgiBinary(extension);
         std::string script_filename = this->env["SCRIPT_FILENAME"];
         
-        // Debug: verificar se os arquivos existem
-        std::cerr << "[DEBUG CGI CHILD] Extension: " << extension << std::endl;
-        std::cerr << "[DEBUG CGI CHILD] CGI Binary: " << cgi_binary << std::endl;
-        std::cerr << "[DEBUG CGI CHILD] Script: " << script_filename << std::endl;
-        
-        // Verificar se o binário existe
+
         if (access(cgi_binary.c_str(), X_OK) != 0)
         {
             std::cerr << "[ERROR CGI CHILD] Cannot access CGI binary: " << cgi_binary << std::endl;
@@ -187,7 +180,6 @@ int CgiHandler::excute_CGI(Request &req, Location &loc)
             exit(1);
         }
         
-        // Verificar se o script existe
         if (access(script_filename.c_str(), R_OK) != 0)
         {
             std::cerr << "[ERROR CGI CHILD] Cannot access script: " << script_filename << std::endl;
@@ -200,12 +192,10 @@ int CgiHandler::excute_CGI(Request &req, Location &loc)
         av[1] = const_cast<char*>(script_filename.c_str());
         av[2] = NULL;
         
-        std::cerr << "[DEBUG CGI CHILD] Executing: " << av[0] << " " << av[1] << std::endl;
         
         if (env)
         {
             ret1 = execve(av[0], av, env);
-            // Se chegou aqui, execve falhou
             std::cerr << "[ERROR CGI CHILD] execve failed: " << strerror(errno) << std::endl;
         }
         else
@@ -258,8 +248,6 @@ std::string CgiHandler::read_from_CGI_process(int timeout_ms)
 
     (void)timeout_ms;
     
-    std::cout << "[DEBUG] Starting to read from CGI process..." << std::endl;
-    
     while (rbytes > 0)
     {
         rbytes = read(this->get_pipe_read_fd(), buf, CGI_READ_BUFFER_SIZE);
@@ -272,7 +260,6 @@ std::string CgiHandler::read_from_CGI_process(int timeout_ms)
         
         if (rbytes > 0)
         {
-            std::cout << "[DEBUG] CGI read " << rbytes << " bytes" << std::endl;
             ret += buf;
             memset(buf, 0, CGI_READ_BUFFER_SIZE + 1);
         }
@@ -282,8 +269,6 @@ std::string CgiHandler::read_from_CGI_process(int timeout_ms)
         }
     }
     
-    std::cout << "[DEBUG] Total CGI output: " << ret.size() << " bytes" << std::endl;
-    std::cout << "[DEBUG] CGI output content:" << std::endl;
     std::cout << "=== START CGI OUTPUT ===" << std::endl;
     std::cout << ret << std::endl;
     std::cout << "=== END CGI OUTPUT ===" << std::endl;
@@ -293,7 +278,6 @@ std::string CgiHandler::read_from_CGI_process(int timeout_ms)
 
 int CgiHandler::write_to_CGI_process()
 {
-	 std::cout << "[DEBUG] Writing to CGI process: " << this->file_resource.size() << " bytes" << std::endl;
     
     int wbyte = write(
                     this->get_pipe_write_fd(), 
@@ -310,8 +294,6 @@ int CgiHandler::write_to_CGI_process()
     }
     else
     {
-        std::cout << "[DEBUG] Successfully wrote " << wbyte << " bytes to CGI" << std::endl;
-        // Fechar o pipe de escrita para sinalizar EOF ao CGI
         close(this->get_pipe_write_fd());
         signal(SIGALRM, SIG_DFL);
         return wbyte;
